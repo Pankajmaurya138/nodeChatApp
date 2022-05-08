@@ -14,7 +14,30 @@ let io = socketIO(server)
 io.on('connection',(socket)=>{
     console.log("New user has connected")
 
+    //socket listen message with event
 
+    socket.emit("newMessage",{
+        from:"Admin",
+        text:"Welcome to chat App !!",
+        createdAt:new Date().getTime(),
+    })
+    socket.broadcast.emit("newMessage",{
+        from:"Admin",
+        text:"New User Joined !!",
+        createdAt:new Date().getTime(),
+    })
+    socket.on("createMessage",(message)=>{
+       
+
+        // send message to every one except to the user whose has sent this message
+        socket.broadcast.emit('newMessage',{
+            from:message.from,
+            text:message.text,
+            createdAt:new Date().getTime(),
+        })
+    })
+
+   
     //check here to user connected or not//
     socket.on("disconnect",()=>{
         console.log("user was disconnected to server")
